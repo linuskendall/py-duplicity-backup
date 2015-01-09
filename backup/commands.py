@@ -6,6 +6,9 @@ import ConfigParser
 cp = ConfigParser.ConfigParser()
 cp.read(['backup.cfg', os.path.expanduser('~/.backup.cfg'), '/etc/backup.cfg'])
 
+# LOGFILE
+LOGFILE=cp.get("backup", "log_file")
+
 # Where we'll write the backup targets
 BACKUP_SOURCE=cp.get('backup', 'backup_source')
 # s3+http://bucket_name
@@ -26,10 +29,10 @@ DUPLICITY_ENV= {
 }
 
 # This is the actual backup command
+# "--log-file", LOGFILE,
 DUPLICITY = [
   cp.get("paths", "duplicity"), 
   "-v4",
-  "--log-file", cp.get("backup", "log_file"),
   "--encrypt-key", cp.get("encryption", "encrypt_key"),
   "--sign-key", cp.get("encryption", "sign_key"),
   "--full-if-older-than", cp.get("archives", "full_if_older_than"),

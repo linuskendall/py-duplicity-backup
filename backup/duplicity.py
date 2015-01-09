@@ -9,12 +9,16 @@ import commands
 
 # set up logger
 import logging
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-ch = logging.FileHandler('duplicity-backup.log')
+
+ch = logging.FileHandler(commands.LOGFILE)
 ch.setLevel(logging.DEBUG)
+
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
+
 logger.addHandler(ch)
 
 # import yaml
@@ -25,11 +29,12 @@ except ImportError:
       from yaml import Loader, Dumper
       import pyaml
 
-def backup(config_file):
+# Backup method, runs the backup given the bakcup set in the file backup_Set
+def backup(backup_set):
   logger.info("Backup started")
 
-  logger.info("Step 1: Read config")
-  backup_targets = read_config(config_file)
+  logger.info("Step 1: Read backup set")
+  backup_targets = read_backup_set(backup_set)
 
   logger.info("Step 2: Write backup targets")
   backup_file = write_backup_list(backup_targets)
@@ -44,7 +49,7 @@ def backup(config_file):
   logger.info("Backup completed")
 
 # reads the config file and gets the target for the backup
-def read_config(config_file):
+def read_backup_set(config_file):
   # dump the databases
   backup_targets = None
   try:
@@ -91,6 +96,7 @@ def write_backup_list(backup_targets):
 
   return backup_list
 
+# run duplicity
 def run_backup(backup_file_list) :
   # finished writing the file list, now run duplicity
   try:
@@ -111,7 +117,7 @@ def clean_old():
 
 def main():
   if len(sys.argv) < 2 or not os.path.isfile(sys.argv[1]):
-    print "Please specify a configuration file as the argument to this command"
+    print "Please specify a backup set in YAML format as the argument to this command"
     exit(2)
 
   backup(sys.argv[1])
