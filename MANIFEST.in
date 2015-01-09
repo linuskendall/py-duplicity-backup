@@ -1,0 +1,3 @@
+include etc/backup.cfg
+include etc/backup.yml
+include backup/__main__.py
