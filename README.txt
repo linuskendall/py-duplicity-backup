@@ -10,6 +10,11 @@ Installation steps
 5. gpg gen-key for signing key
 6. Add to crontab
 
+Pre-requisites
+--------------
+
+Libyaml should be installed to allow for C bindings for yaml interpretation.
+
 Config File
 -----------
 Should be present either in ~/.backup.cfg /etc/backup.cfg or current directory backup.cfg
