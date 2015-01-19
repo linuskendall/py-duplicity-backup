@@ -1,3 +1,4 @@
 include etc/backup.cfg
 include etc/backup.yml
 include backup/__main__.py
+include ez_setup.py
