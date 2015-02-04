@@ -4,7 +4,7 @@ import ConfigParser
 
 # Read config file
 cp = ConfigParser.ConfigParser()
-cp.read(['backup.cfg', os.path.expanduser('~/.backup.cfg'), '/etc/backup.cfg'])
+cp.read(['/etc/backup.cfg', os.path.expanduser('~/.backup.cfg'), 'backup.cfg'])
 
 # LOGFILE
 LOGFILE=cp.get("backup", "log_file")
