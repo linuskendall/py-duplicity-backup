@@ -17,7 +17,7 @@ BACKUP_DEST=cp.get('backup', 'backup_dest')
 # Settings for database backups
 DB_BACKUP_DIR=cp.get('backup', 'db_backup_dir')
 MYSQLDUMP_ENV= { }
-MYSQLDUMP = [cp.get('paths', 'mysqldump'), "-U", "'%(user)s'", "-p'%(password)s'", "--result-file='%(filename)s'", "'%(name)s'"]
+MYSQLDUMP = [cp.get('paths', 'mysqldump'), "--user='%(user)s'", "--password='%(password)s'", "--result-file='%(filename)s'", "'%(name)s'"]
 
 # Environment variables to pass to duplicity
 DUPLICITY_ENV= { 
