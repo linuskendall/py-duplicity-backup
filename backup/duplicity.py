@@ -21,13 +21,7 @@ ch.setFormatter(formatter)
 
 logger.addHandler(ch)
 
-# import yaml
 import yaml
-try:
-      from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-      from yaml import Loader, Dumper
-      import pyaml
 
 # Backup method, runs the backup given the bakcup set in the file backup_Set
 def backup(backup_set):
