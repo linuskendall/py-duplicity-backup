@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='duplicity-backup',
-    version='0.5',
+    version='0.6',
     license='Proprietary',
     author='Linus Kendall',
     author_email='me@linuskendall.com',
