@@ -14,6 +14,9 @@ setup(
     entry_points={
       'console_scripts': [
         'duplicity-backup = backup.duplicity:main',
+        'duplicity-status = backup.duplicity:collection_status',
+        'duplicity-verify = backup.duplicity:verify',
+        'duplicity-list-files = backup.duplicity:list_files',
         ],
       },
     package_data={
