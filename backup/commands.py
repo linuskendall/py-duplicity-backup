@@ -37,7 +37,7 @@ DUPLICITY = [
   "--sign-key", cp.get("encryption", "sign_key"),
   "--full-if-older-than", cp.get("archives", "full_if_older_than"),
   "--include-globbing-filelist=%(backup_file_list)s",
-  BACKUP_SOURCE, BACKUP_DEST,
+  "%(backup_source)s", "%(backup_dest)s",
   ]
 
 # Clean is a list of commands to run to clear old backups
@@ -45,7 +45,7 @@ DUPLICITY = [
 # daily archives for 4 weeks
 DUPLICITY_CLEAN = [
   # remove backups after 6 months
-  [ "duplicity", "remove-older-than", cp.get("archives","remove_older_than"), "--force", BACKUP_DEST ],
+  [ "duplicity", "remove-older-than", cp.get("archives","remove_older_than"), "--force", "%(backup_dest)s" ],
   # Keep incremental copies for the last 4 , since we keep full copies each week, this means 4 weeks of incremental copies to be ketp
-  [ "duplicity", "remove-all-inc-of-but-n-full",cp.get("archives","keep_incrementals_for"), "--force", BACKUP_DEST ], 
+  [ "duplicity", "remove-all-inc-of-but-n-full",cp.get("archives","keep_incrementals_for"), "--force", "%(backup_dest)s" ], 
 ]

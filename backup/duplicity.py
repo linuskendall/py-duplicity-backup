@@ -34,11 +34,11 @@ def backup(backup_set):
   backup_file = write_backup_list(backup_targets)
 
   logger.info("Step 3: Run backup")
-  run_backup(backup_file.name)
+  run_backup(backup_file.name, commands.BACKUP_SOURCE, commands.BACKUP_DEST)
   os.unlink(backup_file.name)
 
   logger.info("Step 4: Clean no longer relevant archives")
-  clean_old()
+  clean_old(commands.BACKUP_DEST)
 
   logger.info("Backup completed")
 
@@ -93,11 +93,12 @@ def write_backup_list(backup_targets):
   return backup_list
 
 # run duplicity
-def run_backup(backup_file_list) :
+def run_backup(backup_file_list, backup_source, backup_dest) :
   # finished writing the file list, now run duplicity
   try:
     logger.info(subprocess.check_call(
-      [ arg % { 'backup_file_list': backup_file_list } for arg in commands.DUPLICITY],
+      [ arg % { 'backup_file_list': backup_file_list, 'backup_source': backup_source, 'backup_dest': backup_dest } 
+        for arg in commands.DUPLICITY],
       stderr=subprocess.STDOUT, 
       env=commands.DUPLICITY_ENV))
   except subprocess.CalledProcessError as e:
@@ -105,11 +106,14 @@ def run_backup(backup_file_list) :
   except OSError as e:
     logger.error("Backup did not succeed: %s" % str(e))
 
-def clean_old():
+def clean_old(backup_dest):
   # after running the backup, lets clean up old backups
   for command in commands.DUPLICITY_CLEAN:
     try:
-      logger.info(subprocess.check_call(command, stderr=subprocess.STDOUT, env=commands.DUPLICITY_ENV))
+      logger.info(subprocess.check_call(
+        [ arg % { 'backup_dest': backup_dest } 
+          for arg in command],
+        stderr=subprocess.STDOUT, env=commands.DUPLICITY_ENV))
     except subprocess.CalledProcessError as e:
       logger.error("Clean command did not succeed: %s" % str(e))
     except OSError as e:
