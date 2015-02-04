@@ -31,14 +31,14 @@ def backup(backup_set):
   backup_targets = read_backup_set(backup_set)
 
   logger.info("Step 2: Write backup targets")
-  backup_file = write_backup_list(backup_targets)
+  backup_file = write_backup_list(backup_targets, backup_targets['db_backup_dir'])
 
   logger.info("Step 3: Run backup")
-  run_backup(backup_file.name, commands.BACKUP_SOURCE, commands.BACKUP_DEST)
+  run_backup(backup_file.name, backup_targets['backup_source'], backup_targets['backup_dest'])
   os.unlink(backup_file.name)
 
   logger.info("Step 4: Clean no longer relevant archives")
-  clean_old(commands.BACKUP_DEST)
+  clean_old(backup_targets['backup_dest'])
 
   logger.info("Backup completed")
 
@@ -58,14 +58,14 @@ def read_backup_set(config_file):
   return backup_targets
 
 # write the backup list to duplicity format
-def write_backup_list(backup_targets):
+def write_backup_list(backup_targets, db_backup_dir):
   # dump the databases to file 
   try: 
     with tempfile.NamedTemporaryFile(delete = False) as backup_list:
       for db in backup_targets['databases']:
         try:
           # set the filename of the generated db file
-          db['filename'] = "%s/%s.sql" % (commands.DB_BACKUP_DIR, db['name'])
+          db['filename'] = "%s/%s.sql" % (db_backup_dir, db['name'])
           # create the command
           command = [ arg % db for arg in commands.MYSQLDUMP ]
           # run the backup command, capturing output to log
@@ -119,6 +119,75 @@ def clean_old(backup_dest):
     except OSError as e:
       logger.error("Clean command did not succeed: %s" % str(e))
 
+'''
+List current status of backup
+'''
+def collection_status():
+  if len(sys.argv) < 2 or not os.path.isfile(sys.argv[1]):
+    print "Please specify a backup set in YAML format as the argument to this command"
+    exit(2)
+
+  backup_targets = read_backup_set(sys.argv[1])
+  
+  # finished writing the file list, now run duplicity
+  try:
+    logger.info(subprocess.check_call(
+      [ arg % { 'backup_dest': backup_targets['backup_dest'] } 
+        for arg in commands.DUPLICITY_COLLECTION_STATUS],
+      stderr=subprocess.STDOUT, 
+      env=commands.DUPLICITY_ENV))
+  except subprocess.CalledProcessError as e:
+    logger.error("Collection status did not succeed: %s" % str(e))
+  except OSError as e:
+    logger.error("Collection status did not succeed: %s" % str(e))
+
+'''
+  List backup archive files
+'''
+def list_files():
+  if len(sys.argv) < 2 or not os.path.isfile(sys.argv[1]):
+    print "Please specify a backup set in YAML format as the argument to this command"
+    exit(2)
+
+  backup_targets = read_backup_set(sys.argv[1])
+  
+  # finished writing the file list, now run duplicity
+  try:
+    logger.info(subprocess.check_call(
+      [ arg % { 'backup_dest': backup_targets['backup_dest'] } 
+        for arg in commands.DUPLICITY_LIST_FILES],
+      stderr=subprocess.STDOUT, 
+      env=commands.DUPLICITY_ENV))
+  except subprocess.CalledProcessError as e:
+    logger.error("File list did not succeed: %s" % str(e))
+  except OSError as e:
+    logger.error("File list did not succeed: %s" % str(e))
+
+'''
+  Verify a backup archive 
+'''
+def verify():
+  if len(sys.argv) < 2 or not os.path.isfile(sys.argv[1]):
+    print "Please specify a backup set in YAML format as the argument to this command"
+    exit(2)
+
+  backup_targets = read_backup_set(sys.argv[1])
+  
+  # finished writing the file list, now run duplicity
+  try:
+    logger.info(subprocess.check_call(
+      [ arg % { 'backup_source': backup_targets['backup_source'], 'backup_dest': backup_targets['backup_dest'] } 
+        for arg in commands.DUPLICITY_VERIFY],
+      stderr=subprocess.STDOUT, 
+      env=commands.DUPLICITY_ENV))
+  except subprocess.CalledProcessError as e:
+    logger.error("Collection status did not succeed: %s" % str(e))
+  except OSError as e:
+    logger.error("Collection status did not succeed: %s" % str(e))
+
+'''
+  Main backup runner
+'''
 def main():
   if len(sys.argv) < 2 or not os.path.isfile(sys.argv[1]):
     print "Please specify a backup set in YAML format as the argument to this command"

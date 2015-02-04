@@ -9,13 +9,7 @@ cp.read(['/etc/backup.cfg', os.path.expanduser('~/.backup.cfg'), 'backup.cfg'])
 # LOGFILE
 LOGFILE=cp.get("backup", "log_file")
 
-# Where we'll write the backup targets
-BACKUP_SOURCE=cp.get('backup', 'backup_source')
-# s3+http://bucket_name
-BACKUP_DEST=cp.get('backup', 'backup_dest')
-
 # Settings for database backups
-DB_BACKUP_DIR=cp.get('backup', 'db_backup_dir')
 MYSQLDUMP_ENV= { }
 MYSQLDUMP = [cp.get('paths', 'mysqldump'), "--user=%(user)s", "--password=%(password)s", "--result-file=%(filename)s", "%(name)s"]
 
@@ -45,7 +39,20 @@ DUPLICITY = [
 # daily archives for 4 weeks
 DUPLICITY_CLEAN = [
   # remove backups after 6 months
-  [ "duplicity", "remove-older-than", cp.get("archives","remove_older_than"), "--force", "%(backup_dest)s" ],
+  [ cp.get("paths", "duplicity"), "remove-older-than", cp.get("archives","remove_older_than"), "--force", "%(backup_dest)s" ],
   # Keep incremental copies for the last 4 , since we keep full copies each week, this means 4 weeks of incremental copies to be ketp
-  [ "duplicity", "remove-all-inc-of-but-n-full",cp.get("archives","keep_incrementals_for"), "--force", "%(backup_dest)s" ], 
+  [ cp.get("paths", "duplicity"), "remove-all-inc-of-but-n-full",cp.get("archives","keep_incrementals_for"), "--force", "%(backup_dest)s" ], 
 ]
+
+DUPLICITY_COLLECTION_STATUS = [
+  cp.get("paths", "duplicity"), "collection-status", "%(backup_dest)s",
+]
+
+DUPLICITY_LIST_FILES = [
+  cp.get("paths", "duplicity"), "list-current-files", "%(backup_dest)s",
+]
+
+DUPLICITY_VERIFY  = [
+  cp.get("paths", "duplicity"), "verify", "%(backup_dest)s", "%(backup_source)s"
+]
+
