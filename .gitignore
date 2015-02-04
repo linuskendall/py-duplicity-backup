@@ -1,0 +1,4 @@
+*.pyc
+duplicity_backup.egg-info/
+build/
+dist/
