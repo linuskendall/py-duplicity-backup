@@ -72,7 +72,9 @@ def write_backup_list(backup_targets):
           logger.info(subprocess.check_call(command, stderr=subprocess.STDOUT, env=commands.MYSQLDUMP_ENV))
           # write backup to list
         except subprocess.CalledProcessError as e:
-          logger.warning('Could not dump db=%s, error=%s' % (db['name'], str(e))) 
+          logger.error('Could not dump db=%s, error=%s' % (db['name'], str(e))) 
+        except OSError as e:
+          logger.error('Could not dump db=%s, error=%s' % (db['name'], str(e))) 
 
       # add the filename
       if os.path.exists(db['filename']): 
@@ -100,6 +102,8 @@ def run_backup(backup_file_list) :
       env=commands.DUPLICITY_ENV))
   except subprocess.CalledProcessError as e:
     logger.error("Backup did not succeed: %s" % str(e))
+  except OSError as e:
+    logger.error("Backup did not succeed: %s" % str(e))
 
 def clean_old():
   # after running the backup, lets clean up old backups
@@ -107,7 +111,9 @@ def clean_old():
     try:
       logger.info(subprocess.check_call(command, stderr=subprocess.STDOUT, env=commands.DUPLICITY_ENV))
     except subprocess.CalledProcessError as e:
-     logger.error("Clean command did not succeed: %s" % str(e))
+      logger.error("Clean command did not succeed: %s" % str(e))
+    except OSError as e:
+      logger.error("Clean command did not succeed: %s" % str(e))
 
 def main():
   if len(sys.argv) < 2 or not os.path.isfile(sys.argv[1]):
