@@ -19,10 +19,8 @@ Config File
 -----------
 Should be present either in ~/.backup.cfg /etc/backup.cfg or current directory backup.cfg
 
+```ini
 [backup]
-backup_source: /
-backup_dest: file:///tmp/backups
-db_backup_dir: /Users/linuskendall/Documents/clients/vizion/db_backups
 log_file: duplicity.log
 
 [archives]
@@ -46,10 +44,16 @@ sign_passphrase:
 [paths]
 mysqldump: /usr/bin/mysqldump
 duplicity: /usr/local/bin/duplicity
+```
 
 Backup Destinations
 -------------------
 Specified in yaml file passed as argument to script:
+
+```
+backup_source: /
+backup_dest: file:///tmp/backups
+db_backup_dir: /Users/linuskendall/Documents/clients/vizion/db_backups
 
 databases:
   - name: mydb
@@ -61,3 +65,5 @@ directories:
   - /Users/linuskendall/Documents/clients/vizion/backup_source/test_dir/**
   - /Users/linuskendall/Documents/clients/vizion/backup_source/linus/**
   - /Users/linuskendall/Documents/clients/vizion/backup_source/bal/**
+  
+```
