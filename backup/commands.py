@@ -14,11 +14,15 @@ MYSQLDUMP_ENV= { }
 MYSQLDUMP = [cp.get('paths', 'mysqldump'), "--user=%(user)s", "--password=%(password)s", "--result-file=%(filename)s", "%(name)s"]
 
 # Environment variables to pass to duplicity
-DUPLICITY_ENV= { 
+DUPLICITY_ENV = { 
   'PATH': os.environ['PATH'], 
-  'PASSPHRASE': cp.get("encryption", "passphrase"), 
-  'SIGN_PASSPHRASE': cp.get("encryption", "sign_passphrase"),
 }
+
+if cp.has_option('encryption', 'passphrase'):
+  DUPLICITY_ENV['PASSPHRASE'] = cp.get("encryption", "passphrase")
+
+if cp.has_option('encryption', 'sign_passphrase'):
+  DUPLICITY_ENV['SIGN_PASSPHRASE'] = cp.get("encryption", "sign_passphrase"),
 
 if cp.has_section('s3'):
   DUPLICITY_ENV['AWS_ACCESS_KEY_ID'] = cp.get("s3", "aws_access_key_id"),
