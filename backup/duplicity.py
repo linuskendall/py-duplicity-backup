@@ -54,7 +54,18 @@ def read_backup_set(config_file):
       logger.error('Could not access backup configuration')
       exit(1)
 
-  logger.info("There are %d databases and %d directories to backup" % (len(backup_targets['databases']), len(backup_targets['directories'])))
+  backup_str = "Backing up:"
+  if 'databases' in backup_targets: 
+    backup_str += " %d databases" % len(backup_targets['databases'])
+
+  if 'directories' in backup_targets:
+    backup_str += " %d directories " % len(backup_targets['directories'])
+
+  if 'exclude_directories' in backup_targets:
+    backup_str += " %d excluded directories " % len(backup_targets['exclude_directories'])
+
+  logger.info(backup_str)
+
   return backup_targets
 
 # write the backup list to duplicity format
@@ -62,27 +73,33 @@ def write_backup_list(backup_targets, db_backup_dir):
   # dump the databases to file 
   try: 
     with tempfile.NamedTemporaryFile(delete = False) as backup_list:
-      for db in backup_targets['databases']:
-        try:
-          # set the filename of the generated db file
-          db['filename'] = "%s/%s.sql" % (db_backup_dir, db['name'])
-          # create the command
-          command = [ arg % db for arg in commands.MYSQLDUMP ]
-          # run the backup command, capturing output to log
-          logger.info(subprocess.check_call(command, stderr=subprocess.STDOUT, env=commands.MYSQLDUMP_ENV))
-          # write backup to list
-        except subprocess.CalledProcessError as e:
-          logger.error('Could not dump db=%s, error=%s' % (db['name'], str(e))) 
-        except OSError as e:
-          logger.error('Could not dump db=%s, error=%s' % (db['name'], str(e))) 
+      if 'databases' in backup_targets:
+        for db in backup_targets['databases']:
+          try:
+            # set the filename of the generated db file
+            db['filename'] = "%s/%s.sql" % (db_backup_dir, db['name'])
+            # create the command
+            command = [ arg % db for arg in commands.MYSQLDUMP ]
+            # run the backup command, capturing output to log
+            logger.info(subprocess.check_call(command, stderr=subprocess.STDOUT, env=commands.MYSQLDUMP_ENV))
+            # write backup to list
+          except subprocess.CalledProcessError as e:
+            logger.error('Could not dump db=%s, error=%s' % (db['name'], str(e))) 
+          except OSError as e:
+            logger.error('Could not dump db=%s, error=%s' % (db['name'], str(e))) 
 
-        # add the filename
-        if os.path.exists(db['filename']): 
-          backup_list.write('+ %s\n' % db['filename']) 
+          # add the filename
+          if os.path.exists(db['filename']): 
+            backup_list.write('+ %s\n' % db['filename']) 
 
       # create the included files
-      for directory in backup_targets['directories']:
-        backup_list.write('+ %s\n' % directory)
+      if 'directories' in backup_targets:
+        for directory in backup_targets['directories']:
+          backup_list.write('+ %s\n' % directory)
+
+      if 'exclude_directories' in backup_targets:
+        for directory in backup_targets['exclude_directories']:
+          backup_list.write('- %s\n' % directory)
 
       # ignore all other files
       backup_list.write('- **\n')
