@@ -8,7 +8,6 @@ databases:
     password: mydbpass
 
 directories: 
-  - /Users/linuskendall/Documents/clients/vizion/backup_source/test.txt
-  - /Users/linuskendall/Documents/clients/vizion/backup_source/test_dir/**
-  - /Users/linuskendall/Documents/clients/vizion/backup_source/linus/**
-  - /Users/linuskendall/Documents/clients/vizion/backup_source/bal/**
+  - /etc/**
+  - /var/**
+  - /home/**

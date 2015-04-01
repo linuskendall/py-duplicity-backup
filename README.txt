@@ -53,7 +53,7 @@ Specified in yaml file passed as argument to script:
 ```
 backup_source: /
 backup_dest: file:///tmp/backups
-db_backup_dir: /Users/linuskendall/Documents/clients/vizion/db_backups
+db_backup_dir: /tmp/db_backups
 
 databases:
   - name: mydb
@@ -61,9 +61,6 @@ databases:
     password: mydbpass
 
 directories: 
-  - /Users/linuskendall/Documents/clients/vizion/backup_source/test.txt
-  - /Users/linuskendall/Documents/clients/vizion/backup_source/test_dir/**
-  - /Users/linuskendall/Documents/clients/vizion/backup_source/linus/**
-  - /Users/linuskendall/Documents/clients/vizion/backup_source/bal/**
-  
+  - /etc/**
+  - /home/** 
 ```

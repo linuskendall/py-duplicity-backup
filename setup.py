@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 setup(
     name='duplicity-backup',
     version='0.8',
-    license='Proprietary',
+    license='GPLv2',
     author='Linus Kendall',
     author_email='me@linuskendall.com',
     long_description='Tool for running backups',
@@ -25,6 +25,6 @@ setup(
         'etc/backup.yml',
         ],
       },
-    description='S3 Backup with Duplicity',
+    description='Backups with Duplicity',
     install_requires=['PyYAML'],
 )
