@@ -18,9 +18,11 @@ DUPLICITY_ENV= {
   'PATH': os.environ['PATH'], 
   'PASSPHRASE': cp.get("encryption", "passphrase"), 
   'SIGN_PASSPHRASE': cp.get("encryption", "sign_passphrase"),
-  'AWS_ACCESS_KEY_ID': cp.get("s3", "aws_access_key_id"),
-  'AWS_SECRET_ACCESS_KEY': cp.get("s3", "aws_secret_access_key"),
 }
+
+if cp.has_section('s3'):
+  DUPLICITY_ENV['AWS_ACCESS_KEY_ID'] = cp.get("s3", "aws_access_key_id"),
+  DUPLICITY_ENV['AWS_SECRET_ACCESS_KEY'] = cp.get("s3", "aws_secret_access_key"),
 
 # This is the actual backup command
 # "--log-file", LOGFILE,
