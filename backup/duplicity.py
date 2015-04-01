@@ -93,13 +93,13 @@ def write_backup_list(backup_targets, db_backup_dir):
             backup_list.write('+ %s\n' % db['filename']) 
 
       # create the included files
-      if 'directories' in backup_targets:
-        for directory in backup_targets['directories']:
-          backup_list.write('+ %s\n' % directory)
-
       if 'exclude_directories' in backup_targets:
         for directory in backup_targets['exclude_directories']:
           backup_list.write('- %s\n' % directory)
+
+      if 'directories' in backup_targets:
+        for directory in backup_targets['directories']:
+          backup_list.write('+ %s\n' % directory)
 
       # ignore all other files
       backup_list.write('- **\n')
