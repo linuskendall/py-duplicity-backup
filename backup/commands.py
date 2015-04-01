@@ -70,6 +70,7 @@ DUPLICITY_LIST_FILES = [
 ] + EXTRA_ARGS
 
 DUPLICITY_VERIFY  = [
-  cp.get("paths", "duplicity"), "verify", "%(backup_dest)s", "%(backup_source)s"
+  cp.get("paths", "duplicity"), "verify", "%(backup_dest)s", "%(backup_source)s", 
+  "--include-globbing-filelist=%(backup_file_list)s",
 ] + EXTRA_ARGS
 

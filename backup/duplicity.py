@@ -172,11 +172,12 @@ def verify():
     exit(2)
 
   backup_targets = read_backup_set(sys.argv[1])
+  backup_file = write_backup_list(backup_targets, backup_targets['db_backup_dir'])
   
   # finished writing the file list, now run duplicity
   try:
     logger.info(subprocess.check_call(
-      [ arg % { 'backup_source': backup_targets['backup_source'], 'backup_dest': backup_targets['backup_dest'] } 
+      [ arg % { 'backup_file_list': backup_file.name, 'backup_source': backup_targets['backup_source'], 'backup_dest': backup_targets['backup_dest'] } 
         for arg in commands.DUPLICITY_VERIFY],
       stderr=subprocess.STDOUT, 
       env=commands.DUPLICITY_ENV))
@@ -184,6 +185,8 @@ def verify():
     logger.error("Collection status did not succeed: %s" % str(e))
   except OSError as e:
     logger.error("Collection status did not succeed: %s" % str(e))
+
+  os.unlink(backup_file.name)
 
 '''
   Main backup runner
