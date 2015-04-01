@@ -18,6 +18,8 @@ DUPLICITY_ENV = {
   'PATH': os.environ['PATH']
 }
 
+EXTRA_ARGS = []
+
 if cp.has_option('encryption', 'passphrase'):
   DUPLICITY_ENV['PASSPHRASE'] = cp.get("encryption", "passphrase")
 
@@ -30,7 +32,12 @@ if cp.has_section('s3'):
 
 if cp.has_section('ftp'):
   DUPLICITY_ENV['FTP_PASSWORD'] = cp.get("ftp", "password")
-  EXTRA_ARGS = [ '--ssh-askpass' ]
+  EXTRA_ARGS.append('--ssh-askpass')
+
+if cp.has_section('encryption.additional_keys'):
+  for key in cp.options('encryption.additional_keys'):
+    EXTRA_ARGS += ['--encrypt-key', cp.get('encryption.additional_keys', key)]
+
 
 # This is the actual backup command
 # "--log-file", LOGFILE,
