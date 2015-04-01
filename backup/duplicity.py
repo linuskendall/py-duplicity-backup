@@ -76,9 +76,9 @@ def write_backup_list(backup_targets, db_backup_dir):
         except OSError as e:
           logger.error('Could not dump db=%s, error=%s' % (db['name'], str(e))) 
 
-      # add the filename
-      if os.path.exists(db['filename']): 
-        backup_list.write('+ %s\n' % db['filename']) 
+        # add the filename
+        if os.path.exists(db['filename']): 
+          backup_list.write('+ %s\n' % db['filename']) 
 
       # create the included files
       for directory in backup_targets['directories']:
