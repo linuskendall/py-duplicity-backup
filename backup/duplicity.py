@@ -187,6 +187,29 @@ def verify():
     logger.error("Collection status did not succeed: %s" % str(e))
 
   os.unlink(backup_file.name)
+'''
+Restore a file
+'''
+def restore():
+  if len(sys.argv) < 4 or not os.path.isfile(sys.argv[1]):
+    print "Please specify a backup set in YAML format as the argument to this command"
+    exit(2)
+
+  backup_targets = read_backup_set(sys.argv[1])
+  file_to_restore = sys.argv[2]
+  destination = sys.argv[3]
+
+  try:
+    logger.info(subprocess.check_call(
+      [ arg % { 'destination': destination, 'file_to_restore': file_to_restore, 'backup_source': backup_targets['backup_source'], 'backup_dest': backup_targets['backup_dest'] } 
+        for arg in commands.DUPLICITY_VERIFY],
+      stderr=subprocess.STDOUT, 
+      env=commands.DUPLICITY_ENV))
+  except subprocess.CalledProcessError as e:
+    logger.error("Restore did not succeed: %s" % str(e))
+  except OSError as e:
+    logger.error("Restore did not succeed: %s" % str(e))
+
 
 '''
   Main backup runner

@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='duplicity-backup',
-    version='0.8',
+    version='0.9',
     license='GPLv2',
     author='Linus Kendall',
     author_email='me@linuskendall.com',
@@ -14,6 +14,7 @@ setup(
     entry_points={
       'console_scripts': [
         'duplicity-backup = backup.duplicity:main',
+        'duplicity-restore = backup.duplicity:restore',
         'duplicity-status = backup.duplicity:collection_status',
         'duplicity-verify = backup.duplicity:verify',
         'duplicity-list-files = backup.duplicity:list_files',
