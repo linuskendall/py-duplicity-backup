@@ -34,8 +34,11 @@ if cp.has_section('s3'):
   DUPLICITY_ENV['AWS_SECRET_ACCESS_KEY'] = cp.get("s3", "aws_secret_access_key")
 
 if cp.has_section('ftp'):
-  DUPLICITY_ENV['FTP_PASSWORD'] = cp.get("ftp", "password")
-  EXTRA_ARGS.append('--ssh-askpass')
+  if cp.has_option('ftp', 'password'):
+    DUPLICITY_ENV['FTP_PASSWORD'] = cp.get("ftp", "password")
+    EXTRA_ARGS.append('--ssh-askpass')
+  if cp.has_option('ftp','identity_file'):
+    EXTRA_ARGS += ['--ssh-options', '-oIdentityFile=%s' % cp.get('ftp','identity_file')]
 
 if cp.has_section('encryption.additional_keys'):
   for key in cp.options('encryption.additional_keys'):
